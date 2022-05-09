@@ -27,9 +27,13 @@ app.listen(config_1.default.PORT, () => __awaiter(void 0, void 0, void 0, functi
 }));
 app.get("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
-    const validInput = username.trim().length > 6 && password.trim().length > 6;
-    if (!validInput)
+    console.log(req.body);
+    if (!username || !password) {
         return res.status(400).send("Your input is invalid");
+    }
+    else if (username.trim().length > 6 && password.trim().length > 6) {
+        return res.status(400).send("Your input is invalid");
+    }
     try {
         const existedUser = yield User_1.User.findOne({ username });
         if (existedUser)
