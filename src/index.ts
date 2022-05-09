@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 const app = express();
 app.use(bodyParser.json());
 
-app.listen(5000, async () => {
+app.listen(config.PORT, async () => {
   console.log("Running on port 5000...");
   await mongoose.connect(config.MONGO_URI!);
   console.log("Mongoose connected");
