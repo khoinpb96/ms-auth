@@ -1,9 +1,12 @@
 import bodyParser from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+import { checkInput } from "./middleware";
 import config from "./config";
 import { User } from "./model/User";
-import bcrypt from "bcryptjs";
 
 const app = express();
 app.use(bodyParser.json());
@@ -14,18 +17,12 @@ app.listen(config.PORT, async () => {
   console.log("Mongoose connected");
 });
 
-app.get("/register", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).send("Your input is invalid");
-  } else if (username.trim().length < 6 || password.trim().length < 6) {
-    return res.status(400).send("Your input is invalid");
-  }
+app.post("/register", checkInput, async (req, res) => {
+  const { username } = req.body;
 
   try {
-    const existedUser = await User.findOne({ username });
-    if (existedUser) return res.status(402).send("Username already existed");
+    const user = await User.findOne({ username });
+    if (user) return res.status(402).send("Username already existed");
 
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -40,5 +37,25 @@ app.get("/register", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.send(error);
+  }
+});
+
+app.get("/login", checkInput, async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return res.status(402).send("Username is not existed");
+
+    const rightPassword = await bcrypt.compare(password, user.password);
+    if (!rightPassword) return res.status(402).send("Wrong password");
+
+    const token = jwt.sign({ username }, config.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    return res.status(200).send(token);
+  } catch (error) {
+    console.log(error);
+    res.status(404).send(error);
   }
 });
