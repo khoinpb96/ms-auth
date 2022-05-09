@@ -17,8 +17,6 @@ app.listen(config.PORT, async () => {
 app.get("/register", async (req, res) => {
   const { username, password } = req.body;
 
-  console.log(req.body);
-
   if (!username || !password) {
     return res.status(400).send("Your input is invalid");
   } else if (username.trim().length < 6 || password.trim().length < 6) {
