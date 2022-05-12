@@ -37,10 +37,14 @@ app.post("/register", checkInput, async (req, res) => {
       authType: "local",
     });
 
+    const token = jwt.sign({ username }, config.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
     res.status(201).send({
       code: 201,
       message: `Create user ${newUser.username} successfully`,
-      data: newUser,
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -64,7 +68,7 @@ app.get("/login", checkInput, async (req, res) => {
     return res.status(200).send({
       code: 200,
       message: `Login successfully`,
-      data: token,
+      token,
     });
   } catch (error) {
     console.log(error);
