@@ -1,24 +1,9 @@
-function responseGenerator(code: number, message: string) {
-  return { code, message };
+function responseGenerator(code: number, message: string, data?: any) {
+  return { code, message, data };
 }
 
-class DefaultResponse {
-  code: number;
-  message: string;
+// const loginSuccessRespone = (token: string) => {
+//   return { code: 200, message: "Login successfully", token };
+// };
 
-  constructor(code: number, message: string) {
-    this.code = code;
-    this.message = message;
-  }
-}
-
-class AuthSuccessResponse extends DefaultResponse {
-  token: string;
-
-  constructor(code: number, message: string, token: string) {
-    super(code, message);
-    this.token = token;
-  }
-}
-
-export { responseGenerator, DefaultResponse, AuthSuccessResponse };
+export { responseGenerator };

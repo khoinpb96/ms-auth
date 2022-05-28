@@ -6,8 +6,6 @@ const router = express.Router();
 
 router.post("/register", checkInput, AuthController.register);
 
-router.get("/login", checkInput);
-
-router.get("/delete-all", AuthController.deleteAllUser);
+router.post("/login", checkInput, AuthController.login);
 
 export default router;
