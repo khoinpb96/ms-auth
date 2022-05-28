@@ -1,15 +1,13 @@
-import bodyParser from "body-parser";
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-
-import { checkInput } from "./middleware";
 import config from "./config";
-import { User } from "./model/User";
+
+import { AuthRouter } from "./routers";
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(cors(config.corsOptions));
 
 app.listen(config.PORT, async () => {
   try {
@@ -21,57 +19,4 @@ app.listen(config.PORT, async () => {
   }
 });
 
-app.post("/register", checkInput, async (req, res) => {
-  const { username } = req.body;
-
-  try {
-    const user = await User.findOne({ username });
-    if (user) return res.status(402).send("Username already existed");
-
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-    const newUser = await User.create({
-      username,
-      password: hashedPassword,
-      authType: "local",
-    });
-
-    const token = jwt.sign({ username }, config.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-
-    res.status(201).send({
-      code: 201,
-      message: `Create user ${newUser.username} successfully`,
-      token,
-    });
-  } catch (error) {
-    console.log(error);
-    res.send(error);
-  }
-});
-
-app.get("/login", checkInput, async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const user = await User.findOne({ username });
-    if (!user) return res.status(402).send("Username is not existed");
-
-    const rightPassword = await bcrypt.compare(password, user.password);
-    if (!rightPassword) return res.status(402).send("Wrong password");
-
-    const token = jwt.sign({ username }, config.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-
-    return res.status(200).send({
-      code: 200,
-      message: `Login successfully`,
-      token,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(404).send(error);
-  }
-});
+app.use("/auth", AuthRouter);
