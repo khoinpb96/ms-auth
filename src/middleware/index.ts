@@ -1,18 +1,38 @@
+import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { responseGenerator } from "../utils";
+import config from "../config";
 
 const checkInput = (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.json(responseGenerator(400, "Your input is invalid"));
-  } else if (username.trim().length < 6 || password.trim().length < 6) {
-    return res.json(
-      responseGenerator(400, "Your input must be at least 6 characters")
-    );
+  if (
+    !username ||
+    !password ||
+    username.trim().length < 6 ||
+    password.trim().length < 6
+  ) {
+    return res.status(400).json({
+      message: "Your input is invalid",
+    });
   }
 
   next();
 };
 
-export { checkInput };
+const checkAccessToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(403).json({ message: "Forgot to add token?" });
+  }
+
+  try {
+    const authUser = jwt.verify(token, config.JWT_SECRET);
+    console.log(authUser);
+  } catch (err: any) {
+    return res.status(403).json({ message: "Token is expired or invalid" });
+  }
+
+  next();
+};
+
+export { checkInput, checkAccessToken };
