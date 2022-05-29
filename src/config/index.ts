@@ -5,7 +5,8 @@ dotenv.config();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://authentication-webapp.vercel.app",
+  "https://authentication-webapp.vercel.app",
+  "https://authentication-webapp-khoinpb96.vercel.app/",
 ];
 
 const corsOptions: cors.CorsOptions = {
