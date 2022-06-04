@@ -1,6 +1,9 @@
 export { default as AuthRouter } from "./auth.router";
+export { default as OAuthRouter } from "./oauth.router";
 export { default as UserRouter } from "./user.router";
 
-export const HealthCheck = (_: any, res: any) => {
-  res.json({ status: "online" });
+import { Request, Response } from "express";
+
+export const HealthCheck = (_: Request, res: Response) => {
+  return res.json({ status: "online" });
 };

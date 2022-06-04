@@ -18,4 +18,8 @@ export default {
   MONGO_URI: process.env.mongo_uri!,
   JWT_SECRET: process.env.jwt_secret!,
   corsOptions,
+  GITHUB: {
+    CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  },
 };

@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import config from "./config";
 
-import { AuthRouter, HealthCheck, UserRouter } from "./routers";
+import { AuthRouter, HealthCheck, OAuthRouter, UserRouter } from "./routers";
 
 const app = express();
 app.use(express.json());
@@ -22,4 +22,5 @@ app.listen(config.PORT, async () => {
 app.get("/health", HealthCheck);
 
 app.use("/auth", AuthRouter);
+app.use("/oauth", OAuthRouter);
 app.use("/user", UserRouter);

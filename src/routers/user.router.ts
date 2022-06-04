@@ -1,15 +1,20 @@
 import express from "express";
-import { UserController } from "../controller";
+import {
+  getAllUser,
+  getUser,
+  editUser,
+  deleteAllUser,
+} from "../controller/user.controller";
 import { checkAccessToken } from "../middleware";
 
 const router = express.Router();
 
-router.get("/", UserController.getAllUser);
+router.get("/", getAllUser);
 
-router.get("/:id", checkAccessToken, UserController.getUser);
+router.get("/:id", checkAccessToken, getUser);
 
-router.put("/:id", checkAccessToken, UserController.editUser);
+router.put("/:id", checkAccessToken, editUser);
 
-router.delete("/delete-all", UserController.deleteAllUser);
+router.delete("/delete-all", deleteAllUser);
 
 export default router;
