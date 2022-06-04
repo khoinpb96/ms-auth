@@ -23,4 +23,4 @@ app.get("/health", HealthCheck);
 
 app.use("/auth", AuthRouter);
 app.use("/oauth", OAuthRouter);
-app.use("/user", UserRouter);
+app.use("/users", UserRouter);

@@ -30,6 +30,7 @@ export const getUser = async (req: Request, res: Response) => {
     phone: user.phone,
     photoUrl: user.photoUrl,
     username: user.username,
+    fullName: user.fullName,
   };
   return res.json(respone);
 };

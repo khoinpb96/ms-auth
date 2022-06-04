@@ -8,16 +8,20 @@ type SchemaType = {
   bio?: string;
   phone?: string;
   photoUrl?: string;
+  oauthId?: string;
+  fullName?: string;
 };
 
 const schema = new mongoose.Schema<SchemaType>({
   username: { type: String, required: true },
-  password: { type: String, required: true },
+  password: String,
   authType: { type: String, required: true },
   email: String,
   bio: String,
   phone: String,
   photoUrl: String,
+  oauthId: String,
+  fullName: String,
 });
 
 const User = mongoose.model("User", schema);

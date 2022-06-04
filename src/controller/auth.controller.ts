@@ -9,25 +9,54 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     const user = await UserModel.findOne({ username });
+    const token = jwt.sign({ username }, config.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    if (user && user.authType) {
+      return res.json({
+        id: user.id,
+        accessToken: token,
+      });
+    }
 
     if (user) {
       return res.status(400).json({ message: "Username already existed" });
     }
 
+    if (req.body.oauthType) {
+      const newOAuthUser = await UserModel.create({
+        username,
+        authType: req.body.oauthType,
+        email: req.body.email || "",
+        bio: req.body.email || "",
+        phone: req.body.phone || "",
+        photoUrl: req.body.photoUrl || "",
+        oauthId: req.body.oauthId || "",
+        fullName: req.body.fullName || "",
+      });
+
+      return res.json({
+        id: newOAuthUser.id,
+        accessToken: token,
+      });
+    }
+
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-    const newUser = await UserModel.create({
+    const newLocalUser = await UserModel.create({
       username,
       password: hashedPassword,
       authType: "local",
-      email: username + "@gmail.com",
-      bio: "",
-      phone: "",
-      photoUrl: "",
+      email: req.body.email || "",
+      bio: req.body.email || "",
+      phone: req.body.phone || "",
+      photoUrl: req.body.photoUrl || "",
     });
 
-    res.json({ message: `Create user ${newUser.username} successfully` });
+    return res.json({
+      message: `Create user ${newLocalUser.username} successfully`,
+    });
   } catch (error) {
     console.log(error);
   }

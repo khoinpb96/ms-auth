@@ -3,7 +3,11 @@ import { NextFunction, Request, Response } from "express";
 import config from "../config";
 
 const checkInput = (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body;
+  const { username, password, oauthType } = req.body;
+
+  if (username && oauthType) {
+    return next();
+  }
 
   if (
     !username ||
@@ -16,7 +20,7 @@ const checkInput = (req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  next();
+  return next();
 };
 
 const checkAccessToken = (req: Request, res: Response, next: NextFunction) => {
@@ -27,12 +31,11 @@ const checkAccessToken = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const authUser = jwt.verify(token, config.JWT_SECRET);
-    console.log(authUser);
   } catch (err: any) {
     return res.status(403).json({ message: "Token is expired or invalid" });
   }
 
-  next();
+  return next();
 };
 
 export { checkInput, checkAccessToken };
